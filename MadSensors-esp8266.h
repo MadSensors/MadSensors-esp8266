@@ -2,10 +2,6 @@
 #include <ESP8266HTTPClient.h>
 #include <string.h>
 
-#ifndef DEVICE_NAME
-#define DEVICE_NAME "device_name_not_defined"
-#endif
-
 #ifndef SERVER
 #define SERVER "api.madsensors.com"
 #endif
@@ -22,7 +18,6 @@
 #define JSON_ARR_SIZE 1
 #endif
 
-
 struct Value
 {
     Value(float value, String context);
@@ -34,7 +29,7 @@ struct Value
 class MadSensor
 {
 public:
-    MadSensor(char* token);
+    MadSensor(char* device_name, char* token);
     ~MadSensor() {};
     void connectWifi(char* ssid, char* password);
     HTTPClient* initHTTP();
@@ -49,7 +44,7 @@ public:
 private:
     char* token;
     char* server;
-    char* deviceLabel;
+    char* deviceName;
     char* ssid;
     char* password;
     Value* JSON[JSON_ARR_SIZE];

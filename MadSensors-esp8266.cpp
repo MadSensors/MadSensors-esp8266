@@ -6,11 +6,11 @@ Value::Value(float value, String context)
   this->context = context;
 }
 
-MadSensor::MadSensor(char* token)
+MadSensor::MadSensor(char* device_name, char* token)
 {
   this->token = token;
   this->server = SERVER;
-  this->deviceLabel = DEVICE_NAME;
+  this->deviceName = device_name;
   index = 0;
 }
 
@@ -38,21 +38,20 @@ void MadSensor::connectWifi(char* ssid, char* password)
     Serial.print(".");
   }
 
-  digitalWrite( ledPin , HIGH);
+  digitalWrite(ledPin , HIGH);
   Serial.println();
 
   Serial.println("Wifi Connected Success!");
-  Serial.print("NodeMCU IP Address : ");
+  Serial.print("IP Address : ");
   Serial.println(WiFi.localIP() );
 }
 
 HTTPClient* MadSensor::initHTTP()
 {
-
   if(WiFi.status() == WL_CONNECTED)
   {
     char url[50];
-    sprintf(url, "http://%s/v1.0/device/%s", server, deviceLabel);
+    sprintf(url, "http://%s/v1.0/device/%s", server, deviceName);
     HTTPClient* httpClient = new HTTPClient;
     httpClient->begin(url);
     return httpClient;
@@ -104,7 +103,7 @@ String MadSensor::sendAll()
   String payload = httpClient->getString();
   this->killHTTPClient(httpClient);
   cleanJSON();
-  return String(httpCode) + ":" + payload;
+  return String(httpCode) + ": " + payload;
 }
 
 void MadSensor::cleanJSON()
