@@ -54,9 +54,11 @@ void loop()
       temperature = 10;
 
     // Shows the payload
+    Serial.print("JSON Payload: ");
     Serial.println(madSensor.getPOSTrequest());
 
     // Send the value to the MadSensor server
+    Serial.print("Server Reply: ");
     Serial.println(madSensor.sendAll());
 
     lastPing = millis();
