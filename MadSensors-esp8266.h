@@ -14,8 +14,8 @@
 #define VERSION "1.0"
 #endif
 
-#ifndef JSON_ARR_SIZE
-#define JSON_ARR_SIZE 1
+#ifndef JSON_MAX_VAR
+#define JSON_MAX_VAR 3
 #endif
 
 struct Value
@@ -47,6 +47,6 @@ private:
     char* deviceName;
     char* ssid;
     char* password;
-    Value* JSON[JSON_ARR_SIZE];
+    Value* JSON[JSON_MAX_VAR];
     int index;
 };

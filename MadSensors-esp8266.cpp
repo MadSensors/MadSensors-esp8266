@@ -25,6 +25,9 @@ void MadSensor::connectWifi(char* ssid, char* password)
 
   Serial.begin(115200);
   Serial.println();
+  Serial.println("####### MadSensors.com #######");
+  Serial.print("Device Name: ");
+  Serial.println(this->deviceName);
   Serial.print("Wifi connecting to ");
   Serial.println( ssid );
 
@@ -71,9 +74,17 @@ void MadSensor::killHTTPClient(HTTPClient* httpClient)
 
 void MadSensor::addNewValue(String context, float val)
 {
-  Value* value = new Value(val, context);
-  addJSONelement(value, index);
-  ++index;
+  // Check JSON_MAX_VAR
+  if (index == JSON_MAX_VAR) {
+    Serial.print("Error: You can only send ");
+    Serial.print(JSON_MAX_VAR);
+    Serial.println(" variables per payload.");
+  }
+  else {
+    Value* value = new Value(val, context);
+    addJSONelement(value, index);
+    ++index;
+  }
 }
 
 void MadSensor::addJSONelement(Value* value, int index)
@@ -84,10 +95,12 @@ void MadSensor::addJSONelement(Value* value, int index)
 String MadSensor::getPOSTrequest()
 {
   String all = "{";
-  for(int i = 0; i < JSON_ARR_SIZE; i++)
+  for(int i = 0; i < index; i++)
   {
-    if(i == JSON_ARR_SIZE -1){all += + "\"" + JSON[i]->context + "\"" + ": " + JSON[i]->value;}
-    else {all += + "\"" + JSON[i]->context + "\"" + ": " + JSON[i]->value + ", ";}
+    if(i == index -1)
+      {all += + "\"" + JSON[i]->context + "\"" + ": " + JSON[i]->value;}
+    else
+      {all += + "\"" + JSON[i]->context + "\"" + ": " + JSON[i]->value + ", ";}
   }
   all += "}";
   return all;
@@ -108,7 +121,7 @@ String MadSensor::sendAll()
 
 void MadSensor::cleanJSON()
 {
-  for(int i = 0;i < JSON_ARR_SIZE; i++)
+  for(int i = 0; i < index-1; i++)
   {
     delete JSON[i];
   }
@@ -117,7 +130,7 @@ void MadSensor::cleanJSON()
 
 void MadSensor::viewJSON()
 {
-  for(int i = 0; i < JSON_ARR_SIZE; i++)
+  for(int i = 0; i < index-1; i++)
   {
     Serial.println(JSON[i]->context + ":" + JSON[i]->value);
   }
